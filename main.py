@@ -1,4 +1,5 @@
 import os, sys
+from posixpath import split
 import textwrap
 from words import wordlist
 import readchar
@@ -21,34 +22,60 @@ class colors:
     REVERSED = '\033[7m'
     RESET = '\033[0m'
 
+def wrap(text, width):
+    global immut_words
+    new_text = ""
+    message = []
+    width_increment = width
+    for i, letter in enumerate(text):
+        print(immut_words[i:].index(" ")+i)
+        if min(width, immut_words[i:].index(" ")+i) == width:
+            message.append(new_text)
+            new_text = ""
+            width += width_increment
+        new_text += letter
+    return message
+
 def printToTerminal(message):
     columns, lines = os.get_terminal_size()
-    message = textwrap.wrap(message, width=columns//3)
+    message = wrap(message, columns//3)
 
     print("\n" * (lines//2-3))
     for i in range(3):
-        print(message[i].center)
+        print(" " * (columns//3) + message[i])
     print("\n" * (lines//2-3))
 
-def main():
-    counter = 0
-    words = choice(wordlist, size=60)
-    print_words = words
-    usrInput = ""
-    x = 0
+def splitLetters(list):
+    new_list = []
+    for word in list:
+        for letter in word:
+            new_list.append(letter)
+        new_list.append(" ")
+    return new_list
 
-    print_words = words[:counter] + colors.REVERSED + words[counter] + colors.RESET + words[counter+1:]
+immut_words = choice(wordlist, size=60)
+immut_words = splitLetters(immut_words)
+
+def main():
+    global immut_words
+    counter = 0
+    words = list(immut_words)
+    usrInput = ""
+
+    words[counter] = colors.REVERSED + words[counter] + colors.RESET
     while usrInput != "\x11":
-        printToTerminal(print_words)
+        printToTerminal(words)
         usrInput = readchar.readkey()
 
-        if usrInput == words[counter]:
-            print_words = print_words[:counter*10] + colors.OKGREEN + words[counter] + colors.RESET + words[counter+1:]
+        if usrInput == immut_words[counter]:
+            words[counter] = colors.OKGREEN + words[counter][4] + colors.RESET
         elif usrInput == "\x7f":
+            words[counter] = immut_words[counter]
+            words[counter-1] = immut_words[counter-1]
             counter -= 2
         else:
-            print_words = print_words[:counter*10] + colors.FAIL + words[counter] + colors.RESET + words[counter+1:]
+            words[counter] = colors.FAIL + words[counter][4] + colors.RESET
         counter += 1
-        print_words = print_words[:counter*10] + colors.REVERSED + words[counter] + colors.RESET + words[counter+1:]
+        words[counter] = colors.REVERSED + words[counter] + colors.RESET
 
 main()
