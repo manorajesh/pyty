@@ -28,7 +28,6 @@ def wrap(text, width):
     message = []
     width_increment = width
     for i, letter in enumerate(text):
-        print(immut_words[i:].index(" ")+i)
         if min(width, immut_words[i:].index(" ")+i) == width:
             message.append(new_text)
             new_text = ""
@@ -55,9 +54,11 @@ def splitLetters(list):
 
 immut_words = choice(wordlist, size=60)
 immut_words = splitLetters(immut_words)
+max_length = len("".join(wrap(immut_words, os.get_terminal_size()[0]//3)[0:3]))
 
 def main():
     global immut_words
+    global max_length
     counter = 0
     words = list(immut_words)
     usrInput = ""
@@ -73,9 +74,18 @@ def main():
             words[counter] = immut_words[counter]
             words[counter-1] = immut_words[counter-1]
             counter -= 2
+        elif immut_words[counter] == " ":
+            words[counter] = colors.FAIL + "_" + colors.RESET
         else:
             words[counter] = colors.FAIL + words[counter][4] + colors.RESET
         counter += 1
+        if counter >= max_length:
+            immut_words = choice(wordlist, size=60)
+            immut_words = splitLetters(immut_words)
+            words = list(immut_words)
+            counter = 0
+            max_length = len("".join(wrap(immut_words, os.get_terminal_size()[0]//3)[0:3]))
+
         words[counter] = colors.REVERSED + words[counter] + colors.RESET
 
 main()
