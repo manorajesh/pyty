@@ -1,11 +1,12 @@
 import os, sys
-from posixpath import split
-import textwrap
+from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNOBTAINABLE
+
+from numpy import std
 from words import wordlist
-import readchar
+import curses
 from numpy.random import choice
 from time import sleep
-from multiprocessing import Process
+from threading import Thread
 
 # Print word list to terminal
 # Check for user input
@@ -36,13 +37,15 @@ def wrap(text, width):
     return message
 
 def printToTerminal(message):
+    global timer
     columns, lines = os.get_terminal_size()
     message = wrap(message, columns//3)
 
-    print("\n" * (lines//2-3))
+    print("\n" * (lines//2-4) + "\r")
+    print(" " * (columns//3) + colors.OKBLUE + str(timer) + colors.RESET + "\n" + "\r")
     for i in range(3):
-        print(" " * (columns//3) + message[i])
-    print("\n" * (lines//2-3))
+        print(" " * (columns//3) + message[i] + "\r")
+    print("\n" * (lines//2-4) + "\r")
 
 def splitLetters(list):
     new_list = []
@@ -52,32 +55,59 @@ def splitLetters(list):
         new_list.append(" ")
     return new_list
 
+def timer_func(total):
+    global timer
+    global words
+    global flag
+    timer = total
+    while not timer == 0 and flag:
+        printToTerminal(words)
+        sleep(1)
+        timer -= 1
+
 immut_words = choice(wordlist, size=60)
 immut_words = splitLetters(immut_words)
+words = list(immut_words)
 max_length = len("".join(wrap(immut_words, os.get_terminal_size()[0]//3)[0:3]))
+timer = 0
+flag = True
 
 def main():
     global immut_words
     global max_length
+    global words
+    global flag
     counter = 0
-    words = list(immut_words)
     usrInput = ""
+    stdscr = curses.initscr()
+    curses.noecho()
+    curses.cbreak()
+    stdscr.keypad(True)
+    correct_typed = 0
+    incorrect_typed = 0
+    time = 60 # seconds
+
+    timer_proc = Thread(target=timer_func, args=(time, ))
+    timer_proc.start()
 
     words[counter] = colors.REVERSED + words[counter] + colors.RESET
-    while usrInput != "\x11":
+    while usrInput != 9 and timer > 0:
         printToTerminal(words)
-        usrInput = readchar.readkey()
+        usrInput = stdscr.getch()
 
-        if usrInput == immut_words[counter]:
+        if chr(usrInput) == immut_words[counter]:
             words[counter] = colors.OKGREEN + words[counter][4] + colors.RESET
-        elif usrInput == "\x7f":
+            correct_typed += 1
+        elif usrInput == 127:
             words[counter] = immut_words[counter]
             words[counter-1] = immut_words[counter-1]
             counter -= 2
         elif immut_words[counter] == " ":
             words[counter] = colors.FAIL + "_" + colors.RESET
+            incorrect_typed += 1
         else:
             words[counter] = colors.FAIL + words[counter][4] + colors.RESET
+            incorrect_typed += 1
         counter += 1
         if counter >= max_length:
             immut_words = choice(wordlist, size=60)
@@ -87,5 +117,20 @@ def main():
             max_length = len("".join(wrap(immut_words, os.get_terminal_size()[0]//3)[0:3]))
 
         words[counter] = colors.REVERSED + words[counter] + colors.RESET
+    
+    flag = False
+    timer_proc.join()
 
-main()
+    net_wpm = (((correct_typed+incorrect_typed)/5)-incorrect_typed)/(time-timer/60)
+    accuracy = correct_typed / (correct_typed+incorrect_typed) * 100
+    stdscr.clear()
+    print(f"Your net WPM: {str(net_wpm)}\n\rYour accuracy: {str(accuracy)}")
+    sleep(5)
+
+    curses.nocbreak()
+    stdscr.keypad(False)
+    curses.echo()
+    curses.endwin()
+
+if __name__ == "__main__":
+    main()
