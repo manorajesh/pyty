@@ -90,14 +90,14 @@ def main():
     timer_proc.start()
 
     words[counter] = colors.REVERSED + words[counter] + colors.RESET
-    while usrInput != 9 and timer > 0:
+    while usrInput != 9 and timer > 0: # 9 is the key for exit (TAB)
         printToTerminal(words)
         usrInput = stdscr.getch()
 
         if chr(usrInput) == immut_words[counter]:
             words[counter] = colors.OKGREEN + words[counter][4] + colors.RESET
             correct_typed += 1
-        elif usrInput == 127:
+        elif usrInput == 127: # 127 is the key for backspace
             words[counter] = immut_words[counter]
             words[counter-1] = immut_words[counter-1]
             counter -= 2
