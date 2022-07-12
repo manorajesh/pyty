@@ -1,5 +1,4 @@
 import os, sys
-from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNOBTAINABLE
 
 from numpy import std
 from words import wordlist
@@ -121,16 +120,18 @@ def main():
     flag = False
     timer_proc.join()
 
-    net_wpm = (((correct_typed+incorrect_typed)/5)-incorrect_typed)/(time-timer/60)
-    accuracy = correct_typed / (correct_typed+incorrect_typed) * 100
-    stdscr.clear()
-    print(f"Your net WPM: {str(net_wpm)}\n\rYour accuracy: {str(accuracy)}")
-    sleep(5)
-
     curses.nocbreak()
     stdscr.keypad(False)
     curses.echo()
     curses.endwin()
+    print("correct: %s, incorrect: %s, time: %s, timer: %s, time-timer: %s\n\r" % (correct_typed, incorrect_typed, time, timer, time-timer))
+    total_entries = correct_typed + incorrect_typed
+    total_time = (time - timer)/60
+
+    net_wpm = round(abs(total_entries/5 - incorrect_typed)/total_time)
+    accuracy = round(correct_typed / (correct_typed+incorrect_typed) * 100)
+    stdscr.clear()
+    print(f"Your net WPM: {net_wpm}\n\rYour accuracy: {accuracy}%\n\rYour raw WPM: {round(total_entries/5/total_time)}")
 
 if __name__ == "__main__":
     main()
