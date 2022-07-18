@@ -1,7 +1,5 @@
-import os, sys
-
-from numpy import std
-from words import wordlist
+import os
+from textlists import wordlists
 import curses
 from numpy.random import choice
 from time import sleep
@@ -54,39 +52,44 @@ def splitLetters(list):
         new_list.append(" ")
     return new_list
 
-def timer_func(total):
+def timer_func():
     global timer
     global words
     global flag
-    timer = total
-    while not timer == 0 and flag:
+    while timer > 0 and flag:
         printToTerminal(words)
         sleep(1)
         timer -= 1
 
-immut_words = choice(wordlist, size=60)
-immut_words = splitLetters(immut_words)
-words = list(immut_words)
+immut_words = 0
+words = 0
 max_length = len("".join(wrap(immut_words, os.get_terminal_size()[0]//3)[0:3]))
-timer = 0
+timer = 60 # seconds
 flag = True
 
-def main():
+def main(time, wordlist):
     global immut_words
     global max_length
     global words
     global flag
+    global timer
+
+    immut_words = choice(wordlists.index(wordlists), size=60)
+    immut_words = splitLetters(immut_words)
+    words = list(immut_words)
+
     counter = 0
     usrInput = ""
     stdscr = curses.initscr()
     curses.noecho()
     curses.cbreak()
+    curses.curs_set(0)
     stdscr.keypad(True)
+    stdscr.clear()
     correct_typed = 0
     incorrect_typed = 0
-    time = 60 # seconds
 
-    timer_proc = Thread(target=timer_func, args=(time, ))
+    timer_proc = Thread(target=timer_func)
     timer_proc.start()
 
     words[counter] = colors.REVERSED + words[counter] + colors.RESET
@@ -124,14 +127,18 @@ def main():
     stdscr.keypad(False)
     curses.echo()
     curses.endwin()
-    print("correct: %s, incorrect: %s, time: %s, timer: %s, time-timer: %s\n\r" % (correct_typed, incorrect_typed, time, timer, time-timer))
-    total_entries = correct_typed + incorrect_typed
-    total_time = (time - timer)/60
+    
+    try:
+        total_entries = correct_typed + incorrect_typed
+        total_time = (time - timer)/60
+        print("correct: %s, incorrect: %s, time: %s, timer: %s, time-timer: %s, total time: %s, total entries: %s\n\r" % (correct_typed, incorrect_typed, time, timer, time-timer, total_time, total_entries))
 
-    net_wpm = round(abs(total_entries/5 - incorrect_typed)/total_time)
-    accuracy = round(correct_typed / (correct_typed+incorrect_typed) * 100)
-    stdscr.clear()
-    print(f"Your net WPM: {net_wpm}\n\rYour accuracy: {accuracy}%\n\rYour raw WPM: {round(total_entries/5/total_time)}")
+        net_wpm = round(abs(total_entries/5 - incorrect_typed)/total_time)
+        accuracy = round(correct_typed / total_entries * 100)
+        raw_wpm = round(total_entries/5/total_time)
+    except ZeroDivisionError:
+        net_wpm = 0
+        accuracy = 0
+        raw_wpm = 0
 
-if __name__ == "__main__":
-    main()
+    print(f"Your net WPM: {net_wpm}\n\rYour accuracy: {accuracy}%\n\rYour raw WPM: {raw_wpm}")

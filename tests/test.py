@@ -15,3 +15,19 @@ print("\n".join(text))
 print(colors.REVERSED + "yes" + colors.RESET)
 message = (colors.REVERSED + "asdfasdfasdf" + colors.RESET)
 print(message[4])
+
+scuz = []
+for i in wordlist:
+    scuz.append(colors.FAIL + i + colors.RESET)
+
+if colors.FAIL in scuz[0]:
+    print("jasdljfalk;sjdfl;kajd;lfakjds;lk")
+
+def scad():
+    def scuz():
+        print("asdf")
+    
+    print("before")
+    scuz()
+
+scad()
