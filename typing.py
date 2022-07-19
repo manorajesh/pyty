@@ -181,5 +181,6 @@ class TypingTest:
 
         curses.endwin()
         
+# Testing Purposes
 if __name__ == "__main__":
     test = TypingTest(time=60, wordlist_index=0) # 0 = Common
