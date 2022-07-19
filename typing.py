@@ -63,20 +63,21 @@ def timer_func():
 
 immut_words = 0
 words = 0
-max_length = len("".join(wrap(immut_words, os.get_terminal_size()[0]//3)[0:3]))
+max_length = 0
 timer = 60 # seconds
 flag = True
 
-def main(time, wordlist):
+def main(time, wordlist_index):
     global immut_words
     global max_length
     global words
     global flag
     global timer
 
-    immut_words = choice(wordlists.index(wordlists), size=60)
+    immut_words = choice(wordlists[wordlist_index], size=60)
     immut_words = splitLetters(immut_words)
     words = list(immut_words)
+    max_length = len("".join(wrap(immut_words, os.get_terminal_size()[0]//3)[0:3]))
 
     counter = 0
     usrInput = ""
@@ -112,7 +113,7 @@ def main(time, wordlist):
             incorrect_typed += 1
         counter += 1
         if counter >= max_length:
-            immut_words = choice(wordlist, size=60)
+            immut_words = choice(wordlists[wordlist_index], size=60)
             immut_words = splitLetters(immut_words)
             words = list(immut_words)
             counter = 0
@@ -142,3 +143,5 @@ def main(time, wordlist):
         raw_wpm = 0
 
     print(f"Your net WPM: {net_wpm}\n\rYour accuracy: {accuracy}%\n\rYour raw WPM: {raw_wpm}")
+
+main(60, 1)

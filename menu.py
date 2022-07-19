@@ -26,7 +26,7 @@ def init():
     curses.cbreak()
 
     lines, columns = scr.getmaxyx()
-    scr.addstr(lines//2-4, columns//4, "title")
+    scr.addstr(lines//2-4, columns//4, "title", curses.A_REVERSE)
     scr.addstr(lines//2-2, columns//4, "Timed Test - [120s] [60s] [30s] [15s] [Custom]")
     scr.addstr(lines//2, columns//4, "Wordlist - [Common] [Wacky] [Source_Code]")
     return scr
@@ -45,7 +45,7 @@ menuscr.keypad(True)
 selectable_text = ["title", "120s", "60s", "30s", "15s", "Custom", "Common", "Wacky", "Source_Code"]
 whole_text = "title\n\rTimed Test - [120s] [60s] [30s] [15s] [Custom]\n\rWordlist - [Common] [Wacky] [Source_Code]\n\r"
 
-pointer = selectable_text.index("60s")
+pointer = selectable_text.index("title")
 wordlist = "Common"
 while (ch := menuscr.getch()) != 9:
     if ch == curses.KEY_RIGHT:
@@ -53,7 +53,7 @@ while (ch := menuscr.getch()) != 9:
     elif ch == curses.KEY_LEFT:
         pointer -= 1
     elif (ch == 32 or curses.KEY_ENTER) and 0 < pointer < 5: # range of times
-        typing.main(selectable_text[pointer][0:2], wordlist.lower())
+        typing.main(int(selectable_text[pointer][0:2]), pointer-6)
     elif (ch == 32 or curses.KEY_ENTER) and pointer == 5: # custom time
         typing.main(input("Enter time: "))
     elif (ch == 32 or curses.KEY_ENTER) and 5 < pointer < 9: # wordlist
