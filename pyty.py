@@ -27,7 +27,7 @@ def menu():
         elif ch == curses.KEY_LEFT:
             pointer -= 1
         elif (ch == 32 or 10) and 0 < pointer < 5: # range of times
-            typing_inst = typing.TypingTest(int(selectable_text[pointer][0:2]), int(selectable_text.index(wordlist))-6)
+            typing_inst = typing.TypingTest(int(selectable_text[pointer].strip("s")), int(selectable_text.index(wordlist))-6)
         elif (ch == 32 or 10) and pointer == 5: # custom time
             typing_inst = typing.TypingTest(int(curses_input(menuscr, "Enter time in seconds: ")), int(selectable_text.index(wordlist))-6)
         elif (ch == 32 or 10) and 5 < pointer < 9: # wordlist
