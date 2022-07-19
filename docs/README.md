@@ -1,9 +1,15 @@
 # pyty - <ins>Py</ins>thonic <ins>Ty</ins>ping Test
 
-<p>A simple typing-test written in Python. There is a selection menu, the actual test, and a results menu that shows several statistics about your typing.</p>
+<p>A simple typing-test written in Python. There is a selection menu, the actual test, and a results menu that shows several statistics about your typing.
+</p>
 
-### Requirements
+## Requirements
 `numpy==1.23.1`
+
+<hr>
+
+###### Note
+The WPM calculations are still under development, so they may not be correct.
 
 <h2 align="center"> Images <h2>
 <p align="center">
