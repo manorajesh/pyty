@@ -2,6 +2,9 @@
 
 <p>A simple typing-test written in Python. There is a selection menu, the actual test, and a results menu that shows several statistics about your typing.</p>
 
+### Requirements
+`numpy==1.23.1`
+
 <h2 align="center"> Images <h2>
 <p align="center">
   <img src="/docs/images/image-3.png" width="682" height="483">
