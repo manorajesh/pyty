@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
 import curses
 import typing
 from textwrap import fill
 
 '''
-title
+pyty
 
 Timed Test - [120s] [60s] [30s] [15s] [Custom]
 
@@ -11,6 +12,34 @@ Wordlist - [Common] [Wacky] [Source_Code]
 '''
 
 longest_len = len("Timed Test - [120s] [60s] [30s] [15s] [Custom]")//2
+
+def menu():
+    menuscr = displayInit()
+    menuscr.keypad(True)
+    selectable_text = ["pyty", "120s", "60s", "30s", "15s", "Custom", "Common", "Wacky", "Source_Code"]
+    whole_text = "pyty\n\rTimed Test - [120s] [60s] [30s] [15s] [Custom]\n\rWordlist - [Common] [Wacky] [Source_Code]\n\r"
+
+    pointer = selectable_text.index("pyty")
+    wordlist = "Common"
+    while (ch := menuscr.getch()) != 9:
+        if ch == curses.KEY_RIGHT:
+            pointer += 1
+        elif ch == curses.KEY_LEFT:
+            pointer -= 1
+        elif (ch == 32 or 10) and 0 < pointer < 5: # range of times
+            typing_inst = typing.TypingTest(int(selectable_text[pointer][0:2]), int(selectable_text.index(wordlist))-6)
+        elif (ch == 32 or 10) and pointer == 5: # custom time
+            typing_inst = typing.TypingTest(int(curses_input(menuscr, "Enter time in seconds: ")), int(selectable_text.index(wordlist))-6)
+        elif (ch == 32 or 10) and 5 < pointer < 9: # wordlist
+            wordlist = selectable_text[pointer]
+
+        pointer = pointer%len(selectable_text)
+        active = selectable_text[pointer]
+        menuscr.clear()
+        menuscr.refresh()
+        printToTerminal(whole_text.replace(active, colors.REVERSED + active + colors.RESET).replace(wordlist, colors.OKGREEN + wordlist + colors.RESET), menuscr)
+
+    curses.endwin()
 
 class colors:
     OKBLUE = '\033[94m'
@@ -22,7 +51,7 @@ class colors:
     REVERSED = '\033[7m'
     RESET = '\033[0m'
 
-def init():
+def displayInit():
     gray = 500
     global longest_len
     scr = curses.initscr()
@@ -36,13 +65,11 @@ def init():
     curses.init_color(1, gray, gray, gray) # gray
     curses.init_color(2, 603, 819, 831) # blue
     curses.init_color(3, 969, 773, 624) # peach
-    curses.init_color(4, 929, 145, 306) # red
     curses.init_color(5, 63, 588, 282) # green
 
     curses.init_pair(1, 1, -1) # gray
     curses.init_pair(2, 2, -1) # blue
     curses.init_pair(3, 3, -1) # peach
-    curses.init_pair(4, 4, -1) # red
     curses.init_pair(5, 5, -1) # green
 
     if lines % 2 != 0: # if terminal is not even, add a line
@@ -50,7 +77,7 @@ def init():
     else:
         offset = 0
 
-    scr.addstr(lines//2-4+offset, columns//2-longest_len, "title", curses.A_REVERSE | curses.color_pair(2))
+    scr.addstr(lines//2-4+offset, columns//2-longest_len, "pyty", curses.A_REVERSE | curses.color_pair(2))
     scr.addstr(lines//2-2+offset, columns//2-longest_len, "Timed Test - [120s] [60s] [30s] [15s] [Custom]", curses.color_pair(3))
     scr.addstr(lines//2+offset, columns//2-longest_len, "Wordlist - [Common] [Wacky] [Source_Code]", curses.color_pair(5))
     for i, val in enumerate(fill("Use the arrow keys to select an option; press space to select and TAB to exit", columns//2).split("\n")):
@@ -93,29 +120,5 @@ def curses_input(scr, prompt=""):
         return 42 # indeed, 42 is the answer to the ultimate question of life, the universe, and everything
     return "".join(str(i) for i in number)
 
-menuscr = init()
-menuscr.keypad(True)
-selectable_text = ["title", "120s", "60s", "30s", "15s", "Custom", "Common", "Wacky", "Source_Code"]
-whole_text = "title\n\rTimed Test - [120s] [60s] [30s] [15s] [Custom]\n\rWordlist - [Common] [Wacky] [Source_Code]\n\r"
-
-pointer = selectable_text.index("title")
-wordlist = "Common"
-while (ch := menuscr.getch()) != 9:
-    if ch == curses.KEY_RIGHT:
-        pointer += 1
-    elif ch == curses.KEY_LEFT:
-        pointer -= 1
-    elif (ch == 32 or 10) and 0 < pointer < 5: # range of times
-        typing_inst = typing.TypingTest(int(selectable_text[pointer][0:2]), int(selectable_text.index(wordlist))-6)
-    elif (ch == 32 or 10) and pointer == 5: # custom time
-        typing_inst = typing.TypingTest(int(curses_input(menuscr, "Enter time in seconds: ")), int(selectable_text.index(wordlist))-6)
-    elif (ch == 32 or 10) and 5 < pointer < 9: # wordlist
-        wordlist = selectable_text[pointer]
-
-    pointer = pointer%len(selectable_text)
-    active = selectable_text[pointer]
-    menuscr.clear()
-    menuscr.refresh()
-    printToTerminal(whole_text.replace(active, colors.REVERSED + active + colors.RESET).replace(wordlist, colors.OKGREEN + wordlist + colors.RESET), menuscr)
-
-curses.endwin()
+if __name__ == "__main__":
+    menu()
