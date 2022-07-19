@@ -32,6 +32,8 @@ def menu():
             typing_inst = typing.TypingTest(int(curses_input(menuscr, "Enter time in seconds: ")), int(selectable_text.index(wordlist))-6)
         elif (ch == 32 or 10) and 5 < pointer < 9: # wordlist
             wordlist = selectable_text[pointer]
+        elif (ch == 32 or 10) and pointer == 0:
+            printAboutScreen(menuscr)
 
         pointer = pointer%len(selectable_text)
         active = selectable_text[pointer]
@@ -83,6 +85,17 @@ def displayInit():
     for i, val in enumerate(fill("Use the arrow keys to select an option; press space to select and TAB to exit", columns//2).split("\n")):
             scr.addstr(lines//2+3+offset+i, columns//2-longest_len, val, curses.color_pair(1))
     return scr
+
+def printAboutScreen(scr):
+    lines, columns = scr.getmaxyx()
+    if lines % 2 != 0: # if terminal is not even, add a line
+        offset = 1
+    else:
+        offset = 0
+    scr.addstr(lines//2-4, columns//2-longest_len, "A simple typing test written entirely in Python.", curses.color_pair(2))
+    scr.addstr(lines//2-2, columns//2-longest_len, "Simply select your time and wordlist (i.e. what words you're typing).", curses.color_pair(3))
+    scr.addstr(lines//2, columns//2-longest_len, "Then, type away!", curses.color_pair(5))
+    scr.getch()
 
 def printToTerminal(message, scr):
     global longest_len
