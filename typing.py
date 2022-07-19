@@ -135,7 +135,7 @@ class TypingTest:
             elif usrInput == 127: # 127 is the key for backspace
                 self.words[counter] = self.immut_words[counter]
                 self.words[counter-1] = self.immut_words[counter-1]
-                counter -= 2
+                counter -= 2 if counter > 0 else 1
             elif self.immut_words[counter] == " ":
                 self.words[counter] = colors.FAIL + "_" + colors.RESET
                 incorrect_typed += 1
