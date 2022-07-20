@@ -87,14 +87,18 @@ def displayInit():
     return scr
 
 def printAboutScreen(scr):
+    scr.clear()
+    scr.refresh()
+    global longest_len
     lines, columns = scr.getmaxyx()
-    if lines % 2 != 0: # if terminal is not even, add a line
-        offset = 1
-    else:
-        offset = 0
-    scr.addstr(lines//2-4, columns//2-longest_len, "A simple typing test written entirely in Python.", curses.color_pair(2))
-    scr.addstr(lines//2-2, columns//2-longest_len, "Simply select your time and wordlist (i.e. what words you're typing).", curses.color_pair(3))
-    scr.addstr(lines//2, columns//2-longest_len, "Then, type away!", curses.color_pair(5))
+    message = fill("A simple typing test written entirely in Python. Simply select your time and wordlist (i.e. what words you're typing). Then, type away!", columns//2).split("\n")
+
+    print("\n" * (lines//2-len(message)-3) + "\r") # interesting formatting (fix)
+    for i in message:
+        print(" " * (columns//2-longest_len) + colors.OKBLUE + colors.BOLD + i + colors.RESET + "\r\n")
+
+    for i in fill("Use the arrow keys to select an option; press space to select and TAB to exit", columns//2).split("\n"):
+            print(" " * (columns//2-longest_len) + colors.WARNING + i + colors.RESET + "\r\n")
     scr.getch()
 
 def printToTerminal(message, scr):
