@@ -176,8 +176,9 @@ class TypingTest:
         self.stdscr.addstr(lines//2, columns//3, "Correct: " + str(correct_typed), curses.color_pair(5))
         self.stdscr.addstr(lines//2+1, columns//3, "Incorrect: " + str(incorrect_typed), curses.color_pair(4))
         self.stdscr.addstr(lines//2+2, columns//3, "Raw WPM: " + str(raw_wpm), curses.color_pair(1))
-        self.stdscr.addstr(lines//2+4, columns//3, "Press any key to exit", curses.color_pair(6))
-        self.stdscr.getch()
+        self.stdscr.addstr(lines//2+4, columns//3, "Press TAB to exit", curses.color_pair(6))
+        while self.stdscr.getch() != 9:
+            pass
 
         curses.endwin()
         
