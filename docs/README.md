@@ -19,5 +19,5 @@ The WPM calculations are still under development, so they may not be correct.
   <img src="/docs/images/image-2.png" width="682" height="483">
 </p>
 <p align="center">
-  <img src="/docs/images/image-1.png" width="682" height="483">
+  <img src="/docs/images/image-TAB.png" width="682" height="483">
 </p>
