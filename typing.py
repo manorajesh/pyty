@@ -136,6 +136,7 @@ class TypingTest:
                 self.words[counter] = self.immut_words[counter]
                 self.words[counter-1] = self.immut_words[counter-1]
                 counter -= 2 if counter > 0 else 1
+                incorrect_typed -= 1 if incorrect_typed > 0 else 0 # to give leyway for backspaces
             elif self.immut_words[counter] == " ":
                 self.words[counter] = colors.FAIL + "_" + colors.RESET
                 incorrect_typed += 1
